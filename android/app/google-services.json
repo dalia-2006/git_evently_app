@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "727901575736",
+    "project_id": "evently-app-ec893",
+    "storage_bucket": "evently-app-ec893.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:727901575736:android:a80e86ffc19e000dde24cd",
+        "android_client_info": {
+          "package_name": "com.example.islami"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAE7VE3AjgoRqnIxreQueIMRsaZo1dWAnQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
