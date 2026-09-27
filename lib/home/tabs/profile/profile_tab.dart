@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:islami/l10n/app_localizations.dart';
 import 'package:islami/provider/app_theme_Provider.dart';
+import 'package:islami/provider/user_provider.dart';
 import 'package:islami/utils/app_assets.dart';
 import 'package:islami/utils/app_color.dart';
 import 'package:islami/utils/app_routes.dart';
@@ -19,13 +21,13 @@ class ProfileTab extends StatefulWidget {
 
 class _ProfileTabState extends State<ProfileTab> {
   double? height;
-
   double? width;
 
   @override
   Widget build(BuildContext context) {
     height = context.height;
     width = context.width;
+    var userProvider = Provider.of<UserProvider>(context);
     var themeProvider = Provider.of<AppThemeProvider>(context);
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -42,8 +44,8 @@ class _ProfileTabState extends State<ProfileTab> {
               radius: 50,
             ),
           ),
-          Text('John Safwat', style: Theme.of(context).textTheme.titleSmall),
-          Text('johnsafwat.route@gmail.com', style: AppStyles.reg14grey),
+          Text(userProvider.currentUser!.name, style: Theme.of(context).textTheme.titleSmall),
+          Text(userProvider.currentUser!.email, style: AppStyles.reg14grey),
           BuildItemWidget(
             text: themeProvider.appTheme.isDark
                 ? AppLocalizations.of(context)!.darkMode
@@ -80,7 +82,10 @@ class _ProfileTabState extends State<ProfileTab> {
             item: IconButton(
               onPressed: () {
                 //todo: logout
-                Navigator.of(context).pushNamed(AppRoutes.loginRouteName);
+                FirebaseAuth.instance.signOut();
+                Navigator.of(context).pushNamedAndRemoveUntil(AppRoutes.loginRouteName,
+                  (route) => false,
+                );
               },
               icon: Icon(Icons.logout, color: AppColor.redColor, size: 30),
             ),

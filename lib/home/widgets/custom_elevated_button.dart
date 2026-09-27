@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:islami/utils/size_utils.dart';
 
 class CustomElevatedButton extends StatelessWidget {
   final double? radius;
-
   final VoidCallback onPressed;
   final Widget? child;
   final Color? backgroundColor;
-
   final Color? sideColor;
+  final double? width;
+  final double? height;
+  final EdgeInsetsGeometry? padding;
 
   const CustomElevatedButton({
     super.key,
@@ -17,24 +17,28 @@ class CustomElevatedButton extends StatelessWidget {
     required this.child,
     this.backgroundColor,
     this.sideColor,
+    this.width,
+    this.height,
+    this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor ?? Theme.of(context).cardColor,
-        padding: EdgeInsets.symmetric(
-          vertical: context.height * 0.04,
-          horizontal: context.width * 0.4,
+    return SizedBox(
+      width: width ?? double.infinity,
+      height: height,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: backgroundColor ?? Theme.of(context).cardColor,
+          padding: padding ?? const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(radius ?? 16),
+            side: BorderSide(color: sideColor ?? Colors.transparent, width: 2),
+          ),
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(radius ?? 16),
-          side: BorderSide(color: sideColor ?? Colors.transparent, width: 2),
-        ),
+        onPressed: onPressed,
+        child: child,
       ),
-      onPressed: onPressed,
-      child: child,
     );
   }
 }

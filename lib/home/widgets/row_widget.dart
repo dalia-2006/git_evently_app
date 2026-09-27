@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../provider/app_theme_Provider.dart';
 
 class RowWidget extends StatelessWidget {
-  String img;
-  String title;
-  String description;
+  final String img;
+  final String title;
+  final String description;
   final VoidCallback onChooseClick;
 
-  RowWidget({
+  const RowWidget({
     super.key,
     required this.img,
     required this.title,
@@ -19,8 +16,6 @@ class RowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var themeProvider = Provider.of<AppThemeProvider>(context);
-
     return Row(
       children: [
         Image.asset(img, height: 25, width: 25),

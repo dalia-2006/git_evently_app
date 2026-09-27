@@ -4,8 +4,10 @@ import 'package:islami/home/widgets/common_container.dart';
 import 'package:islami/home/widgets/custom_elevated_button.dart';
 import 'package:islami/home/widgets/custom_text_field.dart';
 import 'package:islami/home/widgets/row_widget.dart';
+import 'package:islami/model/event.dart';
 import 'package:islami/utils/app_assets.dart';
 import 'package:islami/utils/app_styles.dart';
+import 'package:islami/utils/firebase_utils.dart';
 import 'package:provider/provider.dart';
 import '../home/tabs/home/tab_bar_item_widget.dart';
 import '../home/widgets/arrow_back_widget.dart';
@@ -25,9 +27,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
   int selectedIndex = 0;
   var formKey = GlobalKey<FormState>();
   String eventTitle = '';
-
   String eventDescription = '';
-
   DateTime? selectedEventDate;
   String formatDate = '';
   TimeOfDay? selectedEventTime;
@@ -60,37 +60,37 @@ class _AddEventScreenState extends State<AddEventScreen> {
       AppLocalizations.of(context)!.birthday,
     ];
     selectedEventName = addEventList[selectedIndex];
-    // selectedEventImage= themeProvider.appTheme.isDark?eventImgDark[selectedIndex]:eventImgLight[selectedIndex];
+    selectedEventImage= themeProvider.appTheme.isDark?eventImgDark[selectedIndex]:eventImgLight[selectedIndex];
     return DefaultTabController(
       length: 5,
-      child: SafeArea(
-        child: Scaffold(
-          appBar: AppBar(
-            leading: ArrowBackWidget(
-              icon: IconButton(
-                onPressed: () {
-                  //todo : navigate to home
-                  Navigator.of(context).pushNamed(AppRoutes.homeRouteName);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios_new,
-                  color: Theme.of(context).focusColor,
-                  size: 30,
-                ),
+      child: Scaffold(
+        appBar: AppBar(
+          leading: ArrowBackWidget(
+            icon: IconButton(
+              onPressed: () {
+                //todo : navigate to home
+                Navigator.of(context).pushNamed(AppRoutes.homeRouteName);
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Theme.of(context).focusColor,
+                size: 30,
               ),
             ),
-            title: Text(
-              AppLocalizations.of(context)!.addEvent,
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-            centerTitle: true,
           ),
-          body: Padding(
-            padding: EdgeInsets.only(
-              left: context.width * 0.02,
-              right: context.width * 0.02,
-              bottom: context.height * 0.02,
-            ),
+          title: Text(
+            AppLocalizations.of(context)!.addEvent,
+            style: Theme.of(context).textTheme.labelSmall,
+          ),
+          centerTitle: true,
+        ),
+        body: Padding(
+          padding: EdgeInsets.only(
+            left: context.width * 0.02,
+            right: context.width * 0.02,
+            bottom: context.height * 0.02,
+          ),
+          child: SafeArea(
             child: SingleChildScrollView(
               child: Form(
                 key: formKey,
@@ -142,7 +142,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                       AppLocalizations.of(context)!.description,
                       style: Theme.of(context).textTheme.headlineMedium,
                     ),
-
+                  
                     CustomTextField(
                       hintText: AppLocalizations.of(context)!.eventDescription,
                       errorStyle: AppStyles.reg12Red,
@@ -183,7 +183,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                         CustomElevatedButton(
                           onPressed: () {
                             addEvent();
-                          },
+                            },
                           child: Text(
                             AppLocalizations.of(context)!.addEvent,
                             style: AppStyles.med20White,
@@ -204,7 +204,29 @@ class _AddEventScreenState extends State<AddEventScreen> {
   void addEvent() {
     // todo : adda event
     if (formKey.currentState?.validate() == true) {
-      Navigator.of(context).pushNamed(AppRoutes.eventDetailsRouteName);
+      Event event = Event(
+          eventCategoryIndex:selectedIndex+1 ,
+          eventImage: selectedEventImage ,
+          eventName: selectedEventName,
+          eventTitle: eventTitle,
+          eventDate: DateTime(selectedEventDate!.year,
+          selectedEventDate!.month,
+            selectedEventDate!.day,
+            selectedEventTime!.hour,
+            selectedEventTime!.minute
+          ),
+          eventDescription: eventDescription
+      );
+      FirebaseUtils.addEventInFirestore(event)
+      .then((value) {
+        print ('Event added successfully');
+        Navigator.pop(context);
+      },)
+          .catchError((error){
+            print(error.toString());
+      });
+
+      // Navigator.of(context).pushNamed(AppRoutes.eventDetailsRouteName);
     }
   }
 
@@ -227,9 +249,9 @@ class _AddEventScreenState extends State<AddEventScreen> {
       context: context,
       initialTime: TimeOfDay.now(),
     );
-    if (chooseTime == null) {
+    if (chooseTime != null) {
       selectedEventTime = chooseTime;
-      formatTime = chooseTime!.format(context);
+      formatTime = chooseTime.format(context);
       setState(() {});
     }
   }

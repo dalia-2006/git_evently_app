@@ -5,7 +5,7 @@ import '../../utils/size_utils.dart';
 class CommonContainer extends StatelessWidget {
   final Widget child;
 
-  CommonContainer({super.key, required this.child});
+  const CommonContainer({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +21,14 @@ class CommonContainer extends StatelessWidget {
 
 class CommonContainer1 extends StatelessWidget {
   final Widget? child;
-  String img;
+  final String img;
 
-  CommonContainer1({super.key, this.child, required this.img});
+  const CommonContainer1({super.key, this.child, required this.img});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: context.height * 0.5,
+      height: context.height * 0.3,
       decoration: BoxDecoration(
         image: DecorationImage(image: AssetImage(img), fit: BoxFit.fill),
         borderRadius: BorderRadius.circular(16),

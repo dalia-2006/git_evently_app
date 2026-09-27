@@ -29,17 +29,17 @@ class FavouriteTab extends StatelessWidget {
               hintText: "Search for Events",
               hintStyle: AppStyles.reg14grey,
             ),
-            Expanded(
-              child: ListView.separated(
-                itemBuilder: (context, index) {
-                  return EventItemWidget();
-                },
-                separatorBuilder: (context, index) {
-                  return SizedBox(height: context.height * 0.01);
-                },
-                itemCount: 20,
-              ),
-            ),
+            // Expanded(
+            //   child: ListView.separated(
+            //     itemBuilder: (context, index) {
+            //       return EventItemWidget(event: ,);
+            //     },
+            //     separatorBuilder: (context, index) {
+            //       return SizedBox(height: context.height * 0.01);
+            //     },
+            //     itemCount: 20,
+            //   ),
+            // ),
           ],
         ),
       ),
