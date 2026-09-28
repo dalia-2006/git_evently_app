@@ -29,7 +29,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void initState(){
     super.initState();
-    getAllEvents();
+    // getAllEvents();
   }
   @override
   Widget build(BuildContext context) {
@@ -128,7 +128,7 @@ class _HomeTabState extends State<HomeTab> {
                 ),
                Expanded(
                    child:StreamBuilder<List<Event >>(
-                       stream: getAllEvents(),
+                       stream: selectedIndex==0 ? getAllEvents() : getFilterEvents(),
                        builder: (context, snapshot){
                          if(snapshot.hasError){
                            return Center(child: Text(snapshot.error.toString(),
@@ -139,31 +139,19 @@ class _HomeTabState extends State<HomeTab> {
                            return Center(child: Text('No Event Founded',style: Theme.of(context).textTheme.titleMedium,),);
                          }else{
                             eventsList = snapshot.data! ;
-                             if(selectedIndex == 0){
-                               filterList = eventsList ;
-                             }else {
-                              filterList = eventsList.where((event){
-                                 return event.eventCategoryIndex == selectedIndex;
-                               }).toList();
-                              filterList.sort((event1, event2) {
-                                return event1.eventDate.compareTo(event2.eventDate);
-                              },
-                              );
-                             }
-                            /// OR
-                            // selectedIndex == 0 ? getAllEvents() : getFilterEvents();
-                            return filterList.isEmpty
+                            selectedIndex == 0 ? getAllEvents() : getFilterEvents();
+                            return eventsList.isEmpty
                                 ?
                             Center(child: Text('No ${eventsNameList[selectedIndex] } events',style: Theme.of(context).textTheme.titleMedium,),)
                             :
                               ListView.separated(
                               itemBuilder: (context, index) {
-                                return EventItemWidget(event: filterList[index],);
+                                return EventItemWidget(event: eventsList[index],);
                               },
                               separatorBuilder: (context, index) {
                                 return SizedBox(height: context.height * 0.01);
                               },
-                              itemCount: filterList.length,
+                              itemCount: eventsList.length,
                             );
                          }
                        },
@@ -176,43 +164,24 @@ class _HomeTabState extends State<HomeTab> {
       ),
     );
   }
-  // void getAllEvents () async{
-  //  var querySnapshot = await FirebaseUtils.getEventCollection().get();
-  //  eventsList =querySnapshot.docs.map((doc) {
-  //    return doc.data();
-  //  },).toList();
-  //  setState(() {
-  //
-  //  });
-  // }
-///=====================================================
-Stream<List<Event>> getAllEvents(){
-  Stream<QuerySnapshot<Event>> stream = FirebaseUtils.getEventCollection().snapshots();
-   return stream.map((querySnapshot){
-    return querySnapshot.docs.map((doc){
-      return doc.data();
-    }).toList() ;
-  });
-}
-///========================================================
-//   Stream<List<Event>> getAllEvents(){
-//     Stream<QuerySnapshot<Event>> stream = FirebaseUtils.getEventCollection()
-//         .orderBy('event_date').snapshots();
-//     return stream.map((querySnapshot){
-//       return querySnapshot.docs.map((doc){
-//         return doc.data();
-//       }).toList() ;
-//     });
-//   }
-//
-//   Stream<List<Event>> getFilterEvents(){
-//     Stream<QuerySnapshot<Event>> stream = FirebaseUtils.getEventCollection()
-//         .where('event_category_index',isEqualTo: selectedIndex)
-//         .orderBy('event_date').snapshots();
-//     return stream.map((querySnapshot){
-//       return querySnapshot.docs.map((doc){
-//         return doc.data();
-//       }).toList() ;
-//     });
-//   }
+  Stream<List<Event>> getAllEvents(){
+    Stream<QuerySnapshot<Event>> stream = FirebaseUtils.getEventCollection()
+        .orderBy('event_date').snapshots();
+    return stream.map((querySnapshot){
+      return querySnapshot.docs.map((doc){
+        return doc.data();
+      }).toList() ;
+    });
+  }
+
+  Stream<List<Event>> getFilterEvents(){
+    Stream<QuerySnapshot<Event>> stream = FirebaseUtils.getEventCollection()
+        .where('event_category_index',isEqualTo: selectedIndex)
+        .orderBy('event_date').snapshots();
+    return stream.map((querySnapshot){
+      return querySnapshot.docs.map((doc){
+        return doc.data();
+      }).toList() ;
+    });
+  }
 }
